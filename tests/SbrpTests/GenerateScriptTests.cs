@@ -55,9 +55,7 @@ public class GenerateScriptTests
         // MSB4036 "WritePackageUsageData task was not found" failures).
         string artifactsDir = Path.Combine(SandboxDirectory, "artifacts") + Path.DirectorySeparatorChar;
         string arguments = $"-p {package},{version} -x -d {SandboxDirectory}{typeArg} /p:ArtifactsDir={artifactsDir}";
-        string pkgDirectory = type == PackageType.Target
-            ? Path.Combine(PathUtilities.GetPackageTypeDir(type), package.ToLower(), version)
-            : Path.Combine(PathUtilities.GetPackageTypeDir(type), "src", package.ToLower(), version);
+        string pkgDirectory = Path.Combine(PathUtilities.GetPackageTypeDir(type), "src", package.ToLower(), version);
         string pkgSrcDirectory = Path.Combine(PathUtilities.GetRepoRoot(), "src", pkgDirectory);
         string pkgSandboxDirectory = Path.Combine(SandboxDirectory, pkgDirectory);
 

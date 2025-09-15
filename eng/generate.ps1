@@ -19,6 +19,8 @@ function Get-Help() {
   Write-Host ""
   Write-Host "Reference package generation will restore reference package(s) and dependencies and generate cs files"
   Write-Host "and with accompanying projects into the specified destination ('./src/referencePackages/' by default)."
+  Write-Host "Target pack generation will restore targeting packs and generate cs files from their reference assemblies"
+  Write-Host "into the specified destination ('./src/targetPacks/' by default)."
   Write-Host "Text-only package generation will restore the specified package and copy the source-build-usable content"
   Write-Host "into the provided directory ('./src/textOnlyPackages/' by default)."
   Write-Host ""

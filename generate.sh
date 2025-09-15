@@ -18,6 +18,8 @@ usage() {
     echo ""
     echo "  Reference package generation will restore reference package(s) and dependencies and generate cs files"
     echo "  and with accompanying projects into the specified destination ('./src/referencePackages/' by default)."
+    echo "  Target pack generation will restore targeting packs and generate cs files from their reference assemblies"
+    echo "  into the specified destination ('./src/targetPacks/' by default)."
     echo "  Text-only package generation will restore the specified package and copy the source-build-usable content"
     echo "  into the provided directory ('./src/textOnlyPackages/' by default)."
     echo ""
@@ -32,6 +34,7 @@ usage() {
     echo "                                                option above, one per line.  If specified, the --package option is ignored."
     echo "  -d|--destination                              A path to the root of the repo to copy source into."
     echo "  -t|--type                                     Type of the package to generate. Accepted values: ref (default) | text | target."
+    echo "  -t|--type                                     Type of the package to generate. Accepted values: ref (default) | target | text."
     echo "  -x|--excludeDependencies                      Determines if package dependencies should be excluded. Default is false."
     echo "  -a|--regenerate-all                           Regenerate all packages of the specified type."
     echo "  -f|--feeds                                    A semicolon-separated list of additional NuGet feeds to use during restore."
@@ -121,6 +124,7 @@ while [[ $# > 0 ]]; do
         -t|-type)
             type="$2"
             if [[ ! "$type" =~ ^(text|ref|target)$ ]]; then
+            if [[ ! "$type" =~ ^(ref|target|text)$ ]]; then
                 echo -e "${RED}ERROR: Unknown package type: '$type'${NC}"
                 exit 1
             fi
