@@ -1,8 +1,15 @@
 <Project>
 
   <Import Project="..\..\Directory.Build.targets" />
+  <Import Project="$(RepositoryEngineeringDir)PackageValidation.targets" />
 
-  <!-- netstandard2.0's targeting pack uses the old package reference model which doesn't support using a local layout.
+  <PropertyGroup>
+    <!-- CP0003: Assembly version mismatch between baseline and current.
+         Source-generated reference packages use simplified version metadata that doesn't match upstream. -->
+    <NoWarn>$(NoWarn);CP0003</NoWarn>
+  </PropertyGroup>
+
+  <!-- netstandard2.0's targeting packuses the old package reference model which doesn't support using a local layout.
        Therefore disable the package reference download via DisableImplicitFrameworkReferences and manually import the
        packages' targets file to receive the references. -->
   <PropertyGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">

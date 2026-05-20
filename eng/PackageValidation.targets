@@ -1,0 +1,25 @@
+<Project>
+
+  <!-- Package validation: compare built packages against their upstream NuGet baseline to ensure
+       API surface compatibility. Disabled when building from the VMR since upstream feeds aren't
+       available in that environment. -->
+  <PropertyGroup Condition="'$(DotNetBuildFromVMR)' != 'true' and '$(IsPackable)' != 'false' and '$(PackageVersion)' != ''">
+    <EnablePackageValidation>true</EnablePackageValidation>
+    <PackageValidationBaselineVersion>$(PackageVersion)</PackageValidationBaselineVersion>
+    <EnableStrictModeForBaselineValidation>true</EnableStrictModeForBaselineValidation>
+    <!-- Disable intra-package TFM-to-TFM compatibility checks. Different TFMs within a single
+         reference package may legitimately have slightly different API surfaces. -->
+    <EnableStrictModeForCompatibleTfms>false</EnableStrictModeForCompatibleTfms>
+    <EnableStrictModeForCompatibleFrameworksInPackage>false</EnableStrictModeForCompatibleFrameworksInPackage>
+    <!-- PKV004: "TFM does not have a compatible runtime asset in the package."
+         Reference packages and targeting packs only ship ref/ assemblies by design;
+         they never contain lib/ (runtime) assets. -->
+    <!-- PKV006: "TFM is no longer supported in the latest version."
+         Fires when the baseline has TFMs or runtime assets that the current package doesn't.
+         Missing TFMs are not a concern here — source-build itself validates that the required
+         frameworks are present. The primary goal of this validation is API surface correctness
+         for the TFMs we do include. -->
+    <NoWarn>$(NoWarn);PKV004;PKV006</NoWarn>
+  </PropertyGroup>
+
+</Project>
