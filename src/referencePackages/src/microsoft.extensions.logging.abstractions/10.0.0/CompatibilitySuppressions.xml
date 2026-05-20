@@ -25,27 +25,6 @@
   <Suppression>
     <DiagnosticId>CP0021</DiagnosticId>
     <Target>M:Microsoft.Extensions.Logging.Abstractions.NullLogger.BeginScope``1(``0)``0:notnull</Target>
-    <Left>lib/net462/Microsoft.Extensions.Logging.Abstractions.dll</Left>
-    <Right>lib/netstandard2.0/Microsoft.Extensions.Logging.Abstractions.dll</Right>
-    <IsBaselineSuppression>true</IsBaselineSuppression>
-  </Suppression>
-  <Suppression>
-    <DiagnosticId>CP0021</DiagnosticId>
-    <Target>M:Microsoft.Extensions.Logging.Abstractions.NullLogger`1.BeginScope``1(``0)``0:notnull</Target>
-    <Left>lib/net462/Microsoft.Extensions.Logging.Abstractions.dll</Left>
-    <Right>lib/netstandard2.0/Microsoft.Extensions.Logging.Abstractions.dll</Right>
-    <IsBaselineSuppression>true</IsBaselineSuppression>
-  </Suppression>
-  <Suppression>
-    <DiagnosticId>CP0021</DiagnosticId>
-    <Target>M:Microsoft.Extensions.Logging.ILogger.BeginScope``1(``0)``0:notnull</Target>
-    <Left>lib/net462/Microsoft.Extensions.Logging.Abstractions.dll</Left>
-    <Right>lib/netstandard2.0/Microsoft.Extensions.Logging.Abstractions.dll</Right>
-    <IsBaselineSuppression>true</IsBaselineSuppression>
-  </Suppression>
-  <Suppression>
-    <DiagnosticId>CP0021</DiagnosticId>
-    <Target>M:Microsoft.Extensions.Logging.Abstractions.NullLogger.BeginScope``1(``0)``0:notnull</Target>
     <Left>lib/net8.0/Microsoft.Extensions.Logging.Abstractions.dll</Left>
     <Right>lib/net8.0/Microsoft.Extensions.Logging.Abstractions.dll</Right>
     <IsBaselineSuppression>true</IsBaselineSuppression>

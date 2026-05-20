@@ -25,27 +25,6 @@
   <Suppression>
     <DiagnosticId>CP0021</DiagnosticId>
     <Target>M:Microsoft.Extensions.Hosting.IHostApplicationBuilder.ConfigureContainer``1(Microsoft.Extensions.DependencyInjection.IServiceProviderFactory{``0},System.Action{``0})``0:notnull</Target>
-    <Left>lib/net462/Microsoft.Extensions.Hosting.Abstractions.dll</Left>
-    <Right>lib/netstandard2.0/Microsoft.Extensions.Hosting.Abstractions.dll</Right>
-    <IsBaselineSuppression>true</IsBaselineSuppression>
-  </Suppression>
-  <Suppression>
-    <DiagnosticId>CP0021</DiagnosticId>
-    <Target>M:Microsoft.Extensions.Hosting.IHostBuilder.UseServiceProviderFactory``1(Microsoft.Extensions.DependencyInjection.IServiceProviderFactory{``0})``0:notnull</Target>
-    <Left>lib/net462/Microsoft.Extensions.Hosting.Abstractions.dll</Left>
-    <Right>lib/netstandard2.0/Microsoft.Extensions.Hosting.Abstractions.dll</Right>
-    <IsBaselineSuppression>true</IsBaselineSuppression>
-  </Suppression>
-  <Suppression>
-    <DiagnosticId>CP0021</DiagnosticId>
-    <Target>M:Microsoft.Extensions.Hosting.IHostBuilder.UseServiceProviderFactory``1(System.Func{Microsoft.Extensions.Hosting.HostBuilderContext,Microsoft.Extensions.DependencyInjection.IServiceProviderFactory{``0}})``0:notnull</Target>
-    <Left>lib/net462/Microsoft.Extensions.Hosting.Abstractions.dll</Left>
-    <Right>lib/netstandard2.0/Microsoft.Extensions.Hosting.Abstractions.dll</Right>
-    <IsBaselineSuppression>true</IsBaselineSuppression>
-  </Suppression>
-  <Suppression>
-    <DiagnosticId>CP0021</DiagnosticId>
-    <Target>M:Microsoft.Extensions.Hosting.IHostApplicationBuilder.ConfigureContainer``1(Microsoft.Extensions.DependencyInjection.IServiceProviderFactory{``0},System.Action{``0})``0:notnull</Target>
     <Left>lib/net8.0/Microsoft.Extensions.Hosting.Abstractions.dll</Left>
     <Right>lib/net8.0/Microsoft.Extensions.Hosting.Abstractions.dll</Right>
     <IsBaselineSuppression>true</IsBaselineSuppression>
