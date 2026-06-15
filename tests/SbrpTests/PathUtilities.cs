@@ -20,9 +20,8 @@ internal static class PathUtilities
         => type switch
         {
             PackageType.Reference => "referencePackages",
-            PackageType.Target    => "targetPacks",
             PackageType.Text      => "textOnlyPackages",
-            PackageType.Target    => "targetPacks/ILsrc",
+            PackageType.Target    => "targetPacks",
             _ => throw new ArgumentOutOfRangeException(nameof(type), type, $"Unknown package type '{type}'")
         };
 
