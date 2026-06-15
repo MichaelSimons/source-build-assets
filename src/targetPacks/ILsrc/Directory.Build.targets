@@ -1,0 +1,57 @@
+<Project>
+
+  <!-- Import the shared targeting pack targets (defines _TargetingPackLayoutDir, PackageValidation, etc.) -->
+  <Import Project="$([MSBuild]::GetPathOfFileAbove('Directory.Build.targets', '$(MSBuildThisFileDirectory)../'))" />
+
+  <Import Project="$(RepositoryEngineeringDir)ILTooling.targets" />
+
+  <ItemGroup Condition="'$(UsingMicrosoftTraversalSdk)' != 'true'">
+    <_TargetingPackIlSrc Include="$(MSBuildProjectDirectory)\**\*.il" />
+    <_TargetingPackIlSrc Update="@(_TargetingPackIlSrc)" OutputFile="$(_TargetingPackLayoutDir)%(RecursiveDir)%(Filename).dll" />
+  </ItemGroup>
+
+  <Target Name="BuildTargetingPackIlSrc"
+          BeforeTargets="GenerateNuspec"
+          Inputs="@(_TargetingPackIlSrc)"
+          Outputs="@(_TargetingPackIlSrc->'%(OutputFile)')"
+          DependsOnTargets="ResolveIlToolPaths"
+          Condition="'@(_TargetingPackIlSrc)' != ''">
+    <Message Importance="High" Text="[$([System.DateTime]::Now.ToString('HH:mm:ss.ff'))] Begin $(MSBuildProjectName) -> $(_TargetingPackLayoutDir)..." />
+    <MakeDir Directories="@(_TargetingPackIlSrc->'$(_TargetingPackLayoutDir)%(RecursiveDir)')" />
+
+    <ItemGroup>
+      <_IndividualFileProject Include="$(MSBuildProjectFullPath)"
+                              Properties="IlFile=%(_TargetingPackIlSrc.Identity);OutputFile=%(_TargetingPackIlSrc.OutputFile)" />
+    </ItemGroup>
+
+    <MSBuild Projects="@(_IndividualFileProject)"
+             Targets="BuildIlFile"
+             BuildInParallel="true"
+             StopOnFirstFailure="true" />
+
+    <Message Importance="High" Text="[$([System.DateTime]::Now.ToString('HH:mm:ss.ff'))] $(MSBuildProjectName) -> $(_TargetingPackLayoutDir) DONE" />
+  </Target>
+
+  <Target Name="BuildIlFile" DependsOnTargets="ResolveIlToolPaths">
+    <Error Condition="'$(IlasmPath)' == ''" Text="The 'IlasmPath' property must be set." />
+
+    <Exec Command="$(IlasmPath) $(IlFile) -dll -quiet -nologo -deterministic &quot;-output=$(OutputFile)&quot;"
+          IgnoreStandardErrorWarningFormat="true"
+          CustomErrorRegularExpression=": error : " />
+  </Target>
+
+  <!-- Surface the assembled DLLs as <None Pack="true"> items at the same relative path
+       inside the package as their .il counterpart sits on disk (e.g. ref/net6.0/X.il
+       becomes ref/net6.0/X.dll in the package). -->
+  <Target Name="_AddTargetingPackDllsToPack"
+          BeforeTargets="_GetPackageFiles"
+          DependsOnTargets="BuildTargetingPackIlSrc"
+          Condition="'@(_TargetingPackIlSrc)' != ''">
+    <ItemGroup>
+      <None Include="@(_TargetingPackIlSrc->'%(OutputFile)')"
+            Pack="true"
+            PackagePath="%(_TargetingPackIlSrc.RecursiveDir)" />
+    </ItemGroup>
+  </Target>
+
+</Project>

@@ -1,0 +1,28 @@
+<Project>
+
+  <!-- Import the shared targeting pack props -->
+  <Import Project="$([MSBuild]::GetPathOfFileAbove('Directory.Build.props', '$(MSBuildThisFileDirectory)../'))" />
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <IncludeBuildOutput>false</IncludeBuildOutput>
+    <DisableImplicitFrameworkReferences>true</DisableImplicitFrameworkReferences>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <Nullable>Disable</Nullable>
+    <LangVersion>latest</LangVersion>
+
+    <!-- Don't warn on CS3001, CS3002, CS3003, CS3008, CS3009, CS3011, CS3015 - Type is not CLS-compliant. -->
+    <NoWarn>$(NoWarn);CS3001;CS3002;CS3003;CS3008;CS3009;CS3011;CS3015</NoWarn>
+    <!--
+      Don't warn on CS8632 - The annotation for nullable reference types should only be used in code
+      within a '#nullable' annotations context. GenAPI-generated APIs may contain null annotations. -->
+    <NoWarn>$(NoWarn);CS8632</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- Attributes for all targeting packs -->
+    <Compile Include="$(RepoRoot)src\SourceBuildAssemblyMetdata.cs" />
+  </ItemGroup>
+
+</Project>

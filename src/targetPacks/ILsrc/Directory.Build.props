@@ -1,0 +1,10 @@
+<Project>
+
+  <!-- Import the shared targeting pack props -->
+  <Import Project="$([MSBuild]::GetPathOfFileAbove('Directory.Build.props', '$(MSBuildThisFileDirectory)../'))" />
+
+  <PropertyGroup>
+    <RestoreIlTooling>true</RestoreIlTooling>
+  </PropertyGroup>
+
+</Project>

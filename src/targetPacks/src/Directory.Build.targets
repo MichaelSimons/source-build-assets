@@ -1,0 +1,81 @@
+<Project>
+
+  <!-- Import the shared targeting pack targets (defines _TargetingPackLayoutDir, PackageValidation, etc.) -->
+  <Import Project="$([MSBuild]::GetPathOfFileAbove('Directory.Build.targets', '$(MSBuildThisFileDirectory)../'))" />
+
+  <!-- GenAPI-based targeting packs compile .cs reference source into reference assemblies.
+       Each .cs file produces a single DLL that is placed into the pack layout directory. -->
+
+  <ItemGroup Condition="'$(UsingMicrosoftTraversalSdk)' != 'true'">
+    <_TargetingPackCsSrc Include="$(MSBuildProjectDirectory)\**\*.cs"
+                         Exclude="$(MSBuildProjectDirectory)\**\$(CustomizationsSourceFile)" />
+    <_TargetingPackCsSrc Update="@(_TargetingPackCsSrc)" OutputFile="$(_TargetingPackLayoutDir)%(RecursiveDir)%(Filename).dll" />
+  </ItemGroup>
+
+  <Target Name="BuildTargetingPackCsSrc"
+          BeforeTargets="GenerateNuspec"
+          Inputs="@(_TargetingPackCsSrc)"
+          Outputs="@(_TargetingPackCsSrc->'%(OutputFile)')"
+          Condition="'@(_TargetingPackCsSrc)' != ''">
+    <Message Importance="High" Text="[$([System.DateTime]::Now.ToString('HH:mm:ss.ff'))] Begin $(MSBuildProjectName) -> $(_TargetingPackLayoutDir)..." />
+    <MakeDir Directories="@(_TargetingPackCsSrc->'$(_TargetingPackLayoutDir)%(RecursiveDir)')" />
+
+    <ItemGroup>
+      <_IndividualCsFileProject Include="$(MSBuildProjectFullPath)"
+                                Properties="CsFile=%(_TargetingPackCsSrc.Identity);OutputFile=%(_TargetingPackCsSrc.OutputFile)" />
+    </ItemGroup>
+
+    <MSBuild Projects="@(_IndividualCsFileProject)"
+             Targets="BuildCsFile"
+             BuildInParallel="true"
+             StopOnFirstFailure="true" />
+
+    <Message Importance="High" Text="[$([System.DateTime]::Now.ToString('HH:mm:ss.ff'))] $(MSBuildProjectName) -> $(_TargetingPackLayoutDir) DONE" />
+  </Target>
+
+  <Target Name="BuildCsFile">
+    <PropertyGroup>
+      <_AssemblyName>$([System.IO.Path]::GetFileNameWithoutExtension('$(OutputFile)'))</_AssemblyName>
+      <_OutputDir>$([System.IO.Path]::GetDirectoryName('$(OutputFile)'))</_OutputDir>
+    </PropertyGroup>
+
+    <MakeDir Directories="$(_OutputDir)" />
+
+    <!-- Compile the GenAPI-generated source into a reference-only assembly.
+         /refonly ensures the output has no method bodies.
+         /nostdlib+ with explicit references gives full control over the reference set. -->
+    <Exec Command="dotnet exec &quot;$(RoslynTargetsPath)csc.dll&quot; &quot;$(CsFile)&quot; /target:library /out:&quot;$(OutputFile)&quot; /noconfig /nostdlib+ /nowarn:0169,0649,0414,0162,0219,8632,8625,CS8981 /refonly /deterministic /reference:&quot;$(NetStandardRef)&quot; /reference:&quot;$(SystemRuntimeRef)&quot;"
+          IgnoreStandardErrorWarningFormat="true"
+          CustomErrorRegularExpression=": error CS" />
+  </Target>
+
+  <!-- Resolve the paths to the Roslyn compiler and framework references from the current SDK. -->
+  <Target Name="_ResolveCsToolPaths"
+          BeforeTargets="BuildTargetingPackCsSrc">
+    <PropertyGroup>
+      <!-- RoslynTargetsPath is set by the SDK and points to the Roslyn binaries directory. -->
+      <RoslynTargetsPath Condition="'$(RoslynTargetsPath)' == ''">$(MSBuildToolsPath)\Roslyn\</RoslynTargetsPath>
+      <!-- Reference assemblies from the SDK's ref pack for netstandard2.0 compilation. -->
+      <_SdkRefPackDir>$(NetCoreTargetingPackRoot)\NETStandard.Library.Ref\2.1.0\ref\netstandard2.1\</_SdkRefPackDir>
+      <NetStandardRef Condition="'$(NetStandardRef)' == ''">$(_SdkRefPackDir)netstandard.dll</NetStandardRef>
+      <SystemRuntimeRef Condition="'$(SystemRuntimeRef)' == ''">$(_SdkRefPackDir)System.Runtime.dll</SystemRuntimeRef>
+    </PropertyGroup>
+
+    <Error Condition="!Exists('$(RoslynTargetsPath)csc.dll')" Text="Could not find csc.dll at '$(RoslynTargetsPath)'. Ensure the .NET SDK is correctly installed." />
+  </Target>
+
+  <!-- Surface the compiled DLLs as <None Pack="true"> items at the same relative path
+       inside the package as their .cs counterpart sits on disk (e.g. ref/net8.0/X.cs
+       becomes ref/net8.0/X.dll in the package). -->
+  <Target Name="_AddTargetingPackCsDllsToPack"
+          BeforeTargets="_GetPackageFiles"
+          DependsOnTargets="BuildTargetingPackCsSrc"
+          Condition="'@(_TargetingPackCsSrc)' != ''">
+    <ItemGroup>
+      <None Include="@(_TargetingPackCsSrc->'%(OutputFile)')"
+            Pack="true"
+            PackagePath="%(_TargetingPackCsSrc.RecursiveDir)" />
+    </ItemGroup>
+  </Target>
+
+</Project>
